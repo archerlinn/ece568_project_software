@@ -11,8 +11,9 @@ Run one command, leave the program listening, and trigger object detection with 
 - `openwakeword` for always-on wake word detection
 - `sounddevice` for microphone input
 - `opencv-python` for webcam capture
-- `ultralytics` YOLO with `yolov8n.pt` for object detection
+- `ultralytics` YOLO with `yolov8s.pt` for object detection (better accuracy than `yolov8n.pt`)
 - `pyttsx3` for offline text-to-speech
+- `flask` for the local demo webpage
 
 ## Quick Start
 
@@ -41,25 +42,59 @@ Run the demo:
 python main.py
 ```
 
-The first run may take longer because YOLO downloads `yolov8n.pt`.
+The first run may take longer because YOLO downloads `yolov8s.pt`.
+
+For even better accuracy (slower), pick a larger checkpoint without editing code:
+
+```bash
+YOLO_MODEL=yolov8m.pt python main.py
+```
+
+For maximum accuracy on a strong GPU (much slower):
+
+```bash
+YOLO_MODEL=yolov8l.pt python main.py
+```
+
+Then open the local dashboard in a browser:
+
+```text
+http://127.0.0.1:5000
+```
 
 ## Demo Flow
 
 1. Start the program with `python main.py`.
-2. Wait for the message saying it is listening.
-3. Say one of the default openWakeWord wake phrases, or press Enter as a manual fallback.
-4. The program prints `Wake word detected`.
-5. The webcam turns on and captures one frame.
-6. YOLO detects objects in the image.
-7. The program prints object names and confidence scores.
-8. The program speaks a sentence such as:
+2. Open `http://127.0.0.1:5000` to see the local dashboard.
+3. Wait for the message saying it is listening.
+4. Say one of the default openWakeWord wake phrases, press Enter as a manual fallback, or click the dashboard trigger button.
+5. The program prints `Wake word detected`.
+6. The webcam captures one frame.
+7. YOLO detects objects in the image.
+8. The program prints object names and confidence scores.
+9. The program speaks a sentence such as:
 
 ```text
 I see 1 laptop, 1 book, and 2 bottles on the desk.
 ```
 
-9. The annotated detection image is saved as `output.jpg`.
-10. The program returns to listening.
+10. The dashboard updates with the current camera, captured image, YOLO output, detected objects, and spoken sentence.
+11. The annotated detection image is saved as `output.jpg`.
+12. The program returns to listening.
+
+## Local Web Dashboard
+
+The dashboard is served locally from the same `main.py` process. It shows:
+
+- the current live webcam feed
+- the latest captured raw image
+- the latest YOLO output image with bounding boxes
+- detected object names and confidence scores
+- the grouped object summary
+- the sentence being spoken by TTS
+- a manual trigger button for demos
+
+The webpage only runs on your own computer at `127.0.0.1:5000`.
 
 ## Wake Word Note
 
@@ -164,17 +199,18 @@ pip install --upgrade --force-reinstall sounddevice
 - Reduce background noise.
 - Wait for the program to print that it is listening.
 - Press Enter in the terminal to manually trigger detection during the demo.
+- Click the `Trigger Detection` button on the local dashboard.
 
 ### Webcam Does Not Open
 
 - Check camera permissions in the operating system.
 - Close other apps that may be using the webcam.
 - Try a different USB port if using an external webcam.
-- In `main.py`, change `capture_webcam_frame(camera_index=0)` to use camera index `1` if the wrong camera is selected.
+- In `main.py`, change `WEBCAM = WebcamManager()` to `WEBCAM = WebcamManager(camera_index=1)` if the wrong camera is selected.
 
 ### YOLO Model Download Fails
 
-- The first run downloads `yolov8n.pt`.
+- The first run downloads the chosen `.pt` weight file (default `yolov8s.pt`).
 - Make sure the computer has internet access for the first run.
 - After the model is downloaded, future runs can use the local file.
 
@@ -189,4 +225,5 @@ pip install --upgrade --force-reinstall sounddevice
 - `main.py`: the complete one-file demo
 - `requirements.txt`: Python dependencies
 - `README.md`: setup and troubleshooting instructions
+- `captured.jpg`: generated after a detection run
 - `output.jpg`: generated after a detection run

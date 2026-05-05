@@ -4,3 +4,4 @@ opencv-python
 ultralytics
 pyttsx3
 numpy
+flask
