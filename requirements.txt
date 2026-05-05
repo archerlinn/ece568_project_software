@@ -1,0 +1,6 @@
+openwakeword
+sounddevice
+opencv-python
+ultralytics
+pyttsx3
+numpy
