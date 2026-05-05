@@ -35,13 +35,6 @@ from openwakeword import utils as wakeword_utils
 from openwakeword.model import Model
 from ultralytics import YOLO
 
-
-# -----------------------------
-# Easy demo settings to adjust
-# -----------------------------
-
-# Default: yolov8s balances accuracy vs speed better than yolov8n.
-# Override without editing code: YOLO_MODEL=yolov8m.pt python main.py
 YOLO_MODEL_PATH = os.environ.get("YOLO_MODEL", "yolov8s.pt")
 CONFIDENCE_THRESHOLD = 0.40
 CAPTURED_IMAGE_PATH = "captured.jpg"
@@ -56,9 +49,6 @@ WAKE_THRESHOLD = 0.50
 WAKE_COOLDOWN_SECONDS = 4.0
 LISTENING_RESUME_DELAY_SECONDS = 2.5
 
-
-# Shared UI state for the local webpage. A lock keeps background threads from
-# reading and writing this dictionary at the same time.
 UI_LOCK = threading.Lock()
 UI_STATE = {
     "status": "Starting up",
